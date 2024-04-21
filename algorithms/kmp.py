@@ -24,5 +24,3 @@ def knutt_moris_pratt_algorithm(text: str, sample: str):
         if len(sample) == pi[i]:
             return i - len(sample) * 2, count_of_comp
     return -1, count_of_comp
-
-

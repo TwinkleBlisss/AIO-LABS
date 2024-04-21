@@ -15,40 +15,10 @@
 """
 import os
 import time
-
-
-def naive_algorithm(T: str, W: str) -> tuple:
-    """
-    T - текст, W - образец. \n
-    Возвращаем либо None, либо позицию первого вхождения W в T
-    вместе с количеством операций сравнения.
-    """
-    # print(f'В строке "{T}" будем искать подстроку "{W}".')
-    N = len(T)
-    M = len(W)
-    comparisons = 0  # количество операций сравнения
-    for i in range(N - M + 1):
-        # print(f'Возьмём срез с индексами {i}-{i + M - 1} =', T[i: i + M])
-        comparisons += M
-        if T[i: i + M] == W:
-            return i, comparisons
-    return None, comparisons
-
-
-def rabin_carp_algorithm():
-    pass
-
-
-def boyer_mur_horspul_algorithm():
-    pass
-
-
-def knutt_moris_pratt_algorithm():
-    pass
-
-
-def aho_karasik_algorithm():
-    pass
+from algorithms.naive import naive_algorithm
+from algorithms.bmh import boyer_mur_horspul_algorithm
+from algorithms.rc import rabin_carp_algorithm
+from algorithms.kmp import knutt_moris_pratt_algorithm
 
 
 def tests_files(path: str = 'benchmarks/') -> list:
@@ -76,12 +46,9 @@ def tests_values(pairs: list) -> dict:
     values = {}
     for pair in pairs:
         name_of_test = f"{'bad' if pair[0].startswith('bad') else 'good'}_{pair[0].removesuffix('.txt')[-1]}"
-        # print(f"Тест '{name_of_test}'")
         with open(pair[0], 'r', encoding="utf8") as f:
-            # print('читаем ', pair[0])
             T = f.read()
         with open(pair[1], 'r', encoding="utf8") as f:
-            # print('читаем ', pair[1])
             W = f.read()
         values[name_of_test] = (T, W)
     return values
@@ -101,16 +68,24 @@ def count_operations_and_time(algorithm, tests: dict) -> None:
         result, comparisons = algorithm(T, W)
         end = time.time()
         print(fmt.format(test_name, len(T), len(W), result, comparisons, (end - start) * 10 ** 3))
+    print()
     return None
 
 
 def main():
     tests = tests_values(tests_files())
-    # for key, value in tests.items():
-    #     print(key, value)
 
     print("Naive algorithm:")
     count_operations_and_time(naive_algorithm, tests)
+
+    print("Boyer Mur Horspul algorithm:")
+    count_operations_and_time(boyer_mur_horspul_algorithm, tests)
+
+    print("Rabin Carp algorithm:")
+    count_operations_and_time(rabin_carp_algorithm, tests)
+
+    print("Knutt Moris Pratt algorithm:")
+    count_operations_and_time(knutt_moris_pratt_algorithm, tests)
 
 
 if __name__ == '__main__':
