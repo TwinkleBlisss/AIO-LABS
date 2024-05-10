@@ -1,13 +1,12 @@
 import itertools
 
-from lab2.algorithms.base import Base
+from algorithms.base import Base
 
 
 class PTAS(Base):
     def __init__(self, weights: list, prices: list, capacity: int):
         super().__init__(weights, prices, capacity)
-        self.items = {}
-        self.answer = 0
+
 
     def __generate_set(self, k: int):
         source = list(range(len(self.prices)))
@@ -30,7 +29,9 @@ class PTAS(Base):
 
     def solve(self):
         k = 9  # для 90% точности алгоритма
+        items = {}
         for M_array in self.__generate_set(k):
+            self.solution_number += 1
             M = set(M_array)
             common_weight = sum(self.weights[i] for i in M)
             if common_weight > self.capacity:
@@ -39,11 +40,8 @@ class PTAS(Base):
             X, X_price = self.__greed_search(M)
             if M_price + X_price > self.answer:
                 self.answer = M_price + X_price
-                self.items = M | X
+                items = M | X
+        self.items = [0] * len(self.weights)
+        for i in list(items):
+            self.items[i] = 1
 
-
-    def get_answer(self) -> int:
-        return self.answer
-
-    def get_items(self) -> list:
-        return list(self.items)
