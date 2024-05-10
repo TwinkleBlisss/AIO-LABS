@@ -1,4 +1,4 @@
-from base import Base
+from lab2.algorithms.base import Base
 
 
 class DP_weights(Base):

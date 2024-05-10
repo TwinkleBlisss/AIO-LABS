@@ -1,6 +1,6 @@
 import itertools
 
-from base import Base
+from lab2.algorithms.base import Base
 
 
 class PTAS(Base):
