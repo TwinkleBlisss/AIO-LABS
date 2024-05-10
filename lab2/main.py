@@ -3,8 +3,9 @@ import time
 # from algorithms.base import Base
 from algorithms.dp_weights import DP_weights
 from algorithms.ptas import PTAS
+from algorithms.two_approx import TwoApprox
 
-ALGORITHMS = [PTAS]  # записать все классы алгоритмов (пока тестовый вариант)
+ALGORITHMS = [TwoApprox, PTAS]  # записать все классы алгоритмов (пока тестовый вариант)
 
 
 def test_values(path: str = "benchmarks/") -> dict:
@@ -23,10 +24,10 @@ def test_values(path: str = "benchmarks/") -> dict:
     return values
 
 
-def get_output_and_time(algorithm: [DP_weights | PTAS], *args) -> tuple[int, int, list[int], float]:
+def get_output_and_time(algorithm: [DP_weights | PTAS], *args) -> tuple[int, list[int], float]:
     """
     Функция для получения решения теста и времени работы алгоритма.
-    :param f: Класс алгоритма
+    :param algorithm: Класс алгоритма
     :param args: Параметры теста в формате (weights, profits, capacity)
     :return: Итоговый вес, итоговая стоимость, выбранный предметы, время работы
     """
@@ -35,7 +36,7 @@ def get_output_and_time(algorithm: [DP_weights | PTAS], *args) -> tuple[int, int
     algo_class.solve()
     profit, chosen_items = algo_class.get_answer(), algo_class.get_items()
     end = time.time()
-    return 666, profit, chosen_items, (end - start)
+    return profit, chosen_items, (end - start)
 
 
 def check_algorithms(capacity: int, profits: list[int], optimal_solution: list[int], weights: list[int]) -> None:
@@ -43,18 +44,39 @@ def check_algorithms(capacity: int, profits: list[int], optimal_solution: list[i
     Функция для вывода информации о работе алгоритма
     (результата, количества операций сравнения и времени выполнения).
     """
-    print('{:10} | {:7} | {:7} | {:^35} | {:^35} | {:^12}'
-          .format('Algorithm', 'Weight', 'Profit', 'Chosen items', 'Optimal solution', 'Time in sec'))
-    fmt = '{:10} | {:7} | {:7} | {:35} | {:35} | {:.10f}'
+    print('| {:^10} | {:^10} | {:^45} | {:^15} | {:^45} | {:^12} |'
+          .format('Algorithm', 'Profit', 'Chosen items', 'Optimal profit', 'Optimal solution', 'Time in sec'))
+    fmt = '| {:10} | {:10} | {:^45} | {:15} | {:^45} | {:.10f} |'
+    optimal_profit = sum([profits[i] if optimal_solution[i] == 1 else 0 for i in range(len(profits))])
     for algorithm in ALGORITHMS:
-        weight, profit, chosen_items, algo_time = \
+        profit, chosen_items, algo_time = \
             get_output_and_time(algorithm, weights, profits, capacity)
-        print(fmt.format(
-            str(algorithm.__name__), weight, profit,
-            str(chosen_items),
-            str(optimal_solution),
-            algo_time
-        ))
+        if len(profits) < 13:
+            print(fmt.format(
+                str(algorithm.__name__),
+                profit,
+                str(chosen_items),
+                optimal_profit,
+                str(optimal_solution),
+                algo_time
+            ))
+        else:
+            # короткая запись ответов
+            chosen_items_short = []
+            optimal_solution_short = []
+            for i in range(len(chosen_items)):
+                if chosen_items[i] == 1:
+                    chosen_items_short.append(i)
+                if optimal_solution[i] == 1:
+                    optimal_solution_short.append(i)
+            print(fmt.format(
+                str(algorithm.__name__),
+                profit,
+                str(chosen_items_short),
+                optimal_profit,
+                str(optimal_solution_short),
+                algo_time
+            ))
     print()
 
 
@@ -63,7 +85,7 @@ def show_result() -> None:
     Запуск на всех тестах.
     """
     # STATUS = "TEST ONE"
-    STATUS =  "FINAL"
+    STATUS = "FINAL"
 
     tests = test_values()
     for test_name, test_value in tests.items():
