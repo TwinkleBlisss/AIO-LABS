@@ -4,6 +4,8 @@ from algorithms.base import Base
 
 
 class PTAS(Base):
+    k = 5  # для 90% точности алгоритма
+
     def __init__(self, weights: list, prices: list, capacity: int):
         super().__init__(weights, prices, capacity)
 
@@ -17,7 +19,7 @@ class PTAS(Base):
 
     def __greed_search(self, M: set):
         common_price = 0
-        capacity = self.capacity - sum([self.prices[i] for i in M])
+        capacity = self.capacity - sum([self.weights[i] for i in M])
         X = set()
         for j in range(len(self.prices)):
             if j not in M and self.weights[j] < capacity:
@@ -28,9 +30,8 @@ class PTAS(Base):
 
 
     def solve(self):
-        k = 9  # для 90% точности алгоритма
         items = {}
-        for M_array in self.__generate_set(k):
+        for M_array in self.__generate_set(PTAS.k):
             self.solution_number += 1
             M = set(M_array)
             common_weight = sum(self.weights[i] for i in M)

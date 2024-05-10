@@ -3,9 +3,10 @@ import time
 # from algorithms.base import Base
 from algorithms.dp_weights import DP_weights
 from algorithms.ptas import PTAS
+from algorithms.branch_and_bound import BranchAndBound
 from algorithms.two_approx import TwoApprox
 
-ALGORITHMS = [TwoApprox, PTAS]  # записать все классы алгоритмов (пока тестовый вариант)
+ALGORITHMS = [DP_weights, TwoApprox, BranchAndBound, PTAS]  # записать все классы алгоритмов (пока тестовый вариант)
 
 
 def test_values(path: str = "benchmarks/") -> dict:
@@ -24,7 +25,7 @@ def test_values(path: str = "benchmarks/") -> dict:
     return values
 
 
-def get_output_and_time(algorithm: [DP_weights | PTAS], *args) -> tuple[int, list[int], float]:
+def get_output_and_time(algorithm: [DP_weights | PTAS], *args) -> tuple[int, list[int], float, int]:
     """
     Функция для получения решения теста и времени работы алгоритма.
     :param algorithm: Класс алгоритма
@@ -34,9 +35,9 @@ def get_output_and_time(algorithm: [DP_weights | PTAS], *args) -> tuple[int, lis
     start = time.time()
     algo_class = algorithm(*args)
     algo_class.solve()
-    profit, chosen_items = algo_class.get_answer(), algo_class.get_items()
+    profit, chosen_items, solution_number = algo_class.get_answer(), algo_class.get_items(), algo_class.get_solution_number()
     end = time.time()
-    return profit, chosen_items, (end - start)
+    return profit, chosen_items, (end - start) * 10**3, solution_number
 
 
 def check_algorithms(capacity: int, profits: list[int], optimal_solution: list[int], weights: list[int]) -> None:
@@ -44,12 +45,12 @@ def check_algorithms(capacity: int, profits: list[int], optimal_solution: list[i
     Функция для вывода информации о работе алгоритма
     (результата, количества операций сравнения и времени выполнения).
     """
-    print('| {:^10} | {:^10} | {:^45} | {:^15} | {:^45} | {:^12} |'
-          .format('Algorithm', 'Profit', 'Chosen items', 'Optimal profit', 'Optimal solution', 'Time in sec'))
-    fmt = '| {:10} | {:10} | {:^45} | {:15} | {:^45} | {:.10f} |'
+    print('| {:^15} | {:^10} | {:^35} | {:^15} | {:^35} | {:^15} | {:^16} |'
+          .format('Algorithm', 'Profit', 'Chosen items', 'Optimal profit', 'Optimal solution', 'Time in ms', 'Num of solutions'))
+    fmt = '| {:15} | {:10} | {:^35} | {:15} | {:^35} | {:4.13f} | {:^16} |'
     optimal_profit = sum([profits[i] if optimal_solution[i] == 1 else 0 for i in range(len(profits))])
     for algorithm in ALGORITHMS:
-        profit, chosen_items, algo_time = \
+        profit, chosen_items, algo_time, solution_number = \
             get_output_and_time(algorithm, weights, profits, capacity)
         if len(profits) < 13:
             print(fmt.format(
@@ -58,7 +59,8 @@ def check_algorithms(capacity: int, profits: list[int], optimal_solution: list[i
                 str(chosen_items),
                 optimal_profit,
                 str(optimal_solution),
-                algo_time
+                algo_time,
+                solution_number
             ))
         else:
             # короткая запись ответов
@@ -75,7 +77,8 @@ def check_algorithms(capacity: int, profits: list[int], optimal_solution: list[i
                 str(chosen_items_short),
                 optimal_profit,
                 str(optimal_solution_short),
-                algo_time
+                algo_time,
+                solution_number
             ))
     print()
 

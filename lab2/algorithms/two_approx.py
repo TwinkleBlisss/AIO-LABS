@@ -1,4 +1,4 @@
-from lab2.algorithms.base import Base
+from algorithms.base import Base
 
 
 class TwoApprox(Base):
@@ -6,6 +6,7 @@ class TwoApprox(Base):
         super().__init__(weights, prices, capacity)
         self.items = []
         self.answer = 0
+        self.solution_number = 2
 
     def __count_arg_sort(self, arr: list[int]) -> list[int]:
         """
@@ -70,11 +71,6 @@ class TwoApprox(Base):
             self.items = qg_knapsack
             self.answer = qg_cost
 
-    def get_answer(self):
-        return self.answer
-
-    def get_items(self):
-        return self.items
 
 
 if __name__ == '__main__':
