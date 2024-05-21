@@ -70,9 +70,12 @@ def genetic_algorithm(values, weights, max_weight, population_size=100, generati
 
 
 # Пример использования генетического алгоритма для задачи о рюкзаке
-values = [3, 2, 5, 8]
-weights = [4, 3, 6, 9]
-max_weight = 10
-best_solution, best_value = genetic_algorithm(values, weights, max_weight)
-print("Лучшее решение:", best_solution)
-print("Лучшее значение:", best_value)
+# values = [3, 2, 5, 8]
+# weights = [4, 3, 6, 9]
+# max_weight = 10
+# best_solution, best_value = genetic_algorithm(values, weights, max_weight)
+# print("Лучшее решение:", best_solution)
+# print("Лучшее значение:", best_value)
+
+# Лучшее решение: [0, 0, 0, 1]
+# Лучшее значение: 8

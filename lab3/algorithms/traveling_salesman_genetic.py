@@ -52,13 +52,13 @@ def mutate(chromosome):
 def genetic_algorithm(distances, population_size=5, generations=3, mutation_rate=0.01):
     num_cities = len(distances)
     population = generate_population(population_size, num_cities)
-    print("First Population:", population)
+    # print("First Population:", population)
 
     for _ in range(generations):
         fitness_scores = [1 / calculate_route_length(chromosome, distances) for chromosome in population]
 
-        print(f"\n\nPopulation in generation №{_}:", population)
-        print(f"\nFitness scores in generation №{_}:", fitness_scores)
+        # print(f"\n\nPopulation in generation №{_}:", population)
+        # print(f"\nFitness scores in generation №{_}:", fitness_scores)
 
         selected_indices = sorted(range(len(fitness_scores)), key=lambda i: fitness_scores[i], reverse=True)[:10]
         selected_population = [population[i] for i in selected_indices]
@@ -80,14 +80,14 @@ def genetic_algorithm(distances, population_size=5, generations=3, mutation_rate
 
 
 # Пример использования генетического алгоритма для задачи коммивояжера
-distances = [
-    [0, 10, 15, 20],
-    [10, 0, 35, 25],
-    [15, 35, 0, 30],
-    [20, 25, 30, 0]
-]
-best_route, best_length = genetic_algorithm(distances)
-print("Лучший маршрут:", best_route)
-print("Длина лучшего маршрута:", best_length)
-
-print(calculate_route_length([0, 1, 2, 3], distances))
+# distances = [
+#     [0, 10, 15, 20],
+#     [10, 0, 35, 25],
+#     [15, 35, 0, 30],
+#     [20, 25, 30, 0]
+# ]
+# best_route, best_length = genetic_algorithm(distances)
+# print("Лучший маршрут:", best_route)
+# print("Длина лучшего маршрута:", best_length)
+#
+# print(calculate_route_length([0, 1, 2, 3], distances))
