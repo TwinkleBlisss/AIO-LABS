@@ -4,10 +4,8 @@ import tsplib95
 import numpy as np
 import pandas as pd
 
-from algorithms import (
-    knapsack_genetic,
-    traveling_salesman_genetic
-)
+from algorithms.knapsack_genetic import Knapsack
+from algorithms.traveling_salesman_genetic import TSP
 
 
 def test_values_knapsack(path: str = "benchmarks/knapsack/") -> dict:
@@ -91,7 +89,7 @@ def get_output_and_time_knapsack(profits: list[int], weights: list[int], capacit
     Функция для получения решения и времени работы алгоритма на одном тесте.
     """
     start = time.time()
-    chosen_items, profit = knapsack_genetic.genetic_algorithm(profits, weights, capacity)
+    chosen_items, profit = Knapsack(profits, weights, capacity).genetic_algorithm()
     end = time.time()
     return profit, chosen_items, (end - start) * 10**3
 
@@ -101,7 +99,7 @@ def get_output_and_time_tsp(distances):
     Функция для получения решения и времени работы алгоритма на одном тесте.
     """
     start = time.time()
-    best_route, best_length = traveling_salesman_genetic.genetic_algorithm(distances)
+    best_route, best_length = TSP(distances).genetic_algorithm()
     end = time.time()
     return best_length, best_route, (end - start) * 10**3
 
