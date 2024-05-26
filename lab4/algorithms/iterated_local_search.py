@@ -1,11 +1,19 @@
 from algorithms.base import Base
-class LocalSearch(Base):
+import random
+
+class IteratedLocalSearch(Base):
     def __init__(self, flows, distances, iter_num=10):
         super().__init__(flows, distances, iter_num)
+
+    def __perturbation(self):
+        city1, city2 = random.sample(self.positions, 2)
+        city1, city2 = min(city1, city2), max(city1, city2)
+        self.positions = self.positions[:city1] + self.positions[city1:city2][::-1] + self.positions[city2:]
 
     def solve(self):
         dont_look_bits = [0] * len(self.positions)
         for _ in range(self.iter_num):
+            self.__perturbation()
             for i in range(len(self.positions)):
                 if dont_look_bits[i]:
                     continue

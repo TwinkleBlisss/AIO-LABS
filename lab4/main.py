@@ -3,8 +3,11 @@ import os
 import time
 import shutil
 
+from algorithms.local_search import LocalSearch
+from algorithms.iterated_local_search import IteratedLocalSearch
+
 # algorithm classes
-ALGORITHMS = ["LocalSearch", "IteratedLocalSearch"]
+ALGORITHMS = [LocalSearch, IteratedLocalSearch]
 
 
 def tests_values(path: str = "benchmarks/") -> dict:
@@ -21,6 +24,7 @@ def tests_values(path: str = "benchmarks/") -> dict:
                 # построчно считываем матрицу расстояний D
                 D_matrix.append(list(map(int, f.readline().split())))
             values[test_name]["D"] = D_matrix
+            f.readline()
             F_matrix = []
             for i in range(values[test_name]["n"]):
                 # построчно считываем матрицу потоков F
@@ -29,17 +33,17 @@ def tests_values(path: str = "benchmarks/") -> dict:
     return values
 
 
-def get_output_and_time(algorithm, n, D, F):
+def get_output_and_time(algorithm, D, F):
     """
     Функция для получения решения теста и времени работы алгоритма.
     :param algorithm: Класс алгоритма
-    :param args: Параметры теста в формате (n - размерность, Distances, Flows)
+    :param args: Параметры теста в формате (Distances, Flows)
     :return: Решение, минимальная стоимость потока
     """
     start = time.time()
     # TODO: Класс в конструктор принимает такие параметры
-    algo_class = algorithm(n, D, F)
-    # TODO: Тут ЕвГений добавит правильный метод вместо solve
+    algo_class = algorithm(F, D)
+    # TODO: Тут ЕвГений добавит правильный метод вместо solve # Нет будет solve
     sol, cost = algo_class.solve()
     end = time.time()
     return sol, cost, (end - start) * 10 ** 3
@@ -76,9 +80,9 @@ def show_results(delete_answers: bool = False):
     for algorithm in ALGORITHMS:
         # создаём директорию с ответами конкретного алгоритма и ПЕРЕХОДИМ В НЕЁ
         os.chdir(ans)  # возвращаемся в директорию с ответами
-        make_directory(algorithm)
+        make_directory(algorithm.__name__)
 
-        print(f"{algorithm}:")  # TODO: поменять на algorithm.__name__
+        print(f"{algorithm.__name__}:")
 
         # определяем формат заголовка
         print('| {:^15} | {:^15} | {:^16} |'
@@ -89,21 +93,14 @@ def show_results(delete_answers: bool = False):
 
         for test_name, test_value in tests.items():
             # решение алгоритма
-            # TODO: раскомментить
-            # solution, cost, algo_time = get_output_and_time(
-            #     algorithm,
-            #     test_value['n'],
-            #     test_value['D'],
-            #     test_value['F']
-            # )
+            solution, cost, algo_time = get_output_and_time(
+                algorithm,
+                test_value['D'],
+                test_value['F']
+            )
 
-            # TODO: удалить
-            solution = [5, 1, 3, 4, 2]
-            cost = 666
-            algo_time = 14.88
 
             # сохраняем solution в файлик "Testname.sol"
-            # TODO: поменять на algorithm.__name__
             with open(f"{test_name.capitalize()}.sol", "w", encoding="utf-8") as f:
                 f.write(" ".join(map(str, solution)))
 
@@ -120,4 +117,5 @@ def main():
 
 
 if __name__ == "__main__":
+    a = [1, 2, 3, 4, 5]
     main()
