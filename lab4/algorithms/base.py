@@ -20,7 +20,3 @@ class Base:
                 answer += self.distances[self.positions[i]][self.positions[j]] * self.flows[i][j]
         return answer
 
-b = itertools.combinations([1, 2, 3, 4, 5], 2)
-
-for i in range(10):
-    print(next(b))
