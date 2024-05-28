@@ -1,4 +1,3 @@
-# TODO: write tests load like in lab3
 import os
 import time
 import shutil
@@ -41,9 +40,7 @@ def get_output_and_time(algorithm, D, F):
     :return: Решение, минимальная стоимость потока
     """
     start = time.time()
-    # TODO: Класс в конструктор принимает такие параметры
     algo_class = algorithm(F, D)
-    # TODO: Тут ЕвГений добавит правильный метод вместо solve # Нет будет solve
     sol, cost = algo_class.solve()
     end = time.time()
     return sol, cost, (end - start) * 10 ** 3
@@ -99,7 +96,6 @@ def show_results(delete_answers: bool = False):
                 test_value['F']
             )
 
-
             # сохраняем solution в файлик "Testname.sol"
             with open(f"{test_name.capitalize()}.sol", "w", encoding="utf-8") as f:
                 f.write(" ".join(map(str, solution)))
@@ -111,8 +107,6 @@ def show_results(delete_answers: bool = False):
 
 
 def main():
-    # path = "benchmarks/"
-    # tests_names = os.listdir(path)
     show_results(delete_answers=False)
 
 

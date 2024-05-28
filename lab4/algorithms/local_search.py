@@ -1,4 +1,6 @@
 from algorithms.base import Base
+
+
 class LocalSearch(Base):
     def __init__(self, flows, distances, iter_num=10):
         super().__init__(flows, distances, iter_num)
