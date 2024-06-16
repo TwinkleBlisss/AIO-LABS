@@ -2,6 +2,9 @@ import os
 import time
 import shutil
 import numpy as np
+import pandas as pd
+
+from algorithms.simulated_annealing_class import SimulatedAnnealing
 
 
 def tests_values(path: str = "benchmarks/") -> dict:
@@ -27,21 +30,59 @@ def tests_values(path: str = "benchmarks/") -> dict:
     return values
 
 
-def main():
-    # path = "benchmarks/"
-    # tests_names = os.listdir(path)
-    # print(tests_names)
-    # print(tests_names[1].rstrip(".txt"))
-    #
-    # m_i, *row = [1, 9, 17, 19, 31, 33]
-    # print(m_i, row)
+def make_directory(path):
+    """
+    Создание ПУСТОЙ директории и переход в неё.
+    """
+    # удаляем файлы, если они есть
+    if os.path.isdir(path):
+        shutil.rmtree(path)
+    os.mkdir(path)
+    os.chdir(path)
+
+
+def get_output_and_time(algorithm, D, F):
+    """
+    Функция для получения решения теста и времени работы алгоритма.
+    """
+    start = time.time()
+    algo_class = algorithm(F, D)
+    sol, cost = algo_class.solve()
+    end = time.time()
+    return sol, cost, (end - start) * 10 ** 3
+
+
+def show_results(delete_answers: bool = False):
+    """
+
+    :return: Пандас датафрейм с названиями тестов (столбцы - название теста,
+    target_function, time)
+    """
+    # загружаем тестовые данные
     tests = tests_values()
-    for key, value in tests.items():
-        print(f"Test '{key}'")
-        print("m:", value["m"], "p:", value['p'])
-        print(type(value["matrix"]))
-        print(value["matrix"])
-        break
+
+    # создаём директорию для ответов и ПЕРЕХОДИМ В НЕЁ
+    root = os.getcwd()  # исходная директория
+    ans_path = "answers"
+    make_directory(ans_path)
+    ans = os.getcwd()  # директория с ответами
+
+    if delete_answers:
+        return
+
+    # results = pd.DataFrame(columns=['Test_name', 'f', 'time'])
+    tmp = {}
+    for test_name, test_value in tests.items():
+        start = time.time()
+        algo_class = SimulatedAnnealing(test_value['matrix'])
+        sol, f = algo_class.solve()
+        end = time.time()
+        tmp[test_name] = sol, f
+    print(tmp)
+
+
+def main():
+    show_results()
 
 
 if __name__ == "__main__":
