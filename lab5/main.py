@@ -23,7 +23,7 @@ def tests_values(path: str = "benchmarks/") -> dict:
                 m_i, *row = list(map(int, f.readline().split()))
                 for j in range(len(row)):
                     matrix[m_i - 1][row[j] - 1] = 1
-            values[no_ext_name]["matrix"] = matrix.tolist()
+            values[no_ext_name]["matrix"] = matrix  # .tolist()
     return values
 
 
@@ -36,7 +36,12 @@ def main():
     # m_i, *row = [1, 9, 17, 19, 31, 33]
     # print(m_i, row)
     tests = tests_values()
-    print(tests)
+    for key, value in tests.items():
+        print(f"Test '{key}'")
+        print("m:", value["m"], "p:", value['p'])
+        print(type(value["matrix"]))
+        print(value["matrix"])
+        break
 
 
 if __name__ == "__main__":
