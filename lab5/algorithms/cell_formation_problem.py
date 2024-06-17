@@ -2,6 +2,9 @@ import random
 import numpy as np
 
 
+random.seed(444)
+
+
 class CFP:
     def __init__(self, matrix, num_of_intervals=2):
         self.matrix = matrix
@@ -58,7 +61,17 @@ class CFP:
         parts_groups = {}
 
         # рассматриваем все существующие (ненулевые!) похожести
-        for score in sim_scores:
+        # print("SAmples", random.sample(sim_scores, len(sim_scores)))
+        idx_x = 0
+        idx_y = len(sim_scores) - 1
+        k = 0
+        while (idx_x < idx_y):
+            if k % 2 == 0:
+                score = sim_scores[idx_x]
+                idx_x += 1
+            else:
+                score = sim_scores[idx_y]
+                idx_y -= 1
             # сравниваем с каждым интервалом
             for i in range(self.num_of_intervals):
                 # если коэффициент похожести лежит до границы интервала
@@ -71,6 +84,11 @@ class CFP:
                         parts_groups[part_1] = i
                     if part_2 not in parts_groups.keys():
                         parts_groups[part_2] = i
+            k += 1
+
+
+        # print("parts_groups keys", set(parts_groups.keys()))
+        # print("parts_groups", parts_groups)
 
         # записываем номера деталей группировано
         cells = [[] for _ in range(self.num_of_intervals)]
@@ -145,10 +163,9 @@ class CFP:
 
         return cells_machines
 
-    def initial_solution(self, num_of_intervals=2):
+    def initial_solution(self):
         """
         :param self.matrix: матрица, где строка - машина, столбец - деталь (1 значит машина i производит деталь j).
-        :param num_of_intervals: количество групп, на которые разобьём детали b машины соответственно
         :return: два списка с распределением деталей и машин по группам.
         """
         sim_scores = self.parts_similarity_scores()
@@ -184,3 +201,18 @@ class CFP:
 
         f = (n_1 - n_1_out) / (n_1 + n_0_in)
         return f
+
+
+# from lab5.main import tests_values
+# tests = tests_values(path="../benchmarks/")
+#
+# input_matrix = tests["37x53"]["matrix"]
+#
+# one = CFP(input_matrix)
+# init_sol = one.initial_solution()
+#
+# # print(one.parts_similarity_scores())
+# print(init_sol[0])
+# print(init_sol[1])
+#
+# print(one.target_function(*init_sol))

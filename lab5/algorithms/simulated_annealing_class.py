@@ -5,8 +5,8 @@ from algorithms.cell_formation_problem import CFP
 
 class SimulatedAnnealing:
     def __init__(self, matrix, T0=500, Tf=200,
-                 alpha=0.8, max_iterations=10, D=2,
-                 max_stagnant=5, trapped_percentage=0.25):
+                 alpha=0.8, max_iterations=200, D=50,
+                 max_stagnant=25, trapped_percentage=0.25):
         self.matrix = matrix
         self.T0 = T0
         self.Tf = Tf
@@ -38,30 +38,19 @@ class SimulatedAnnealing:
         cell, cell_index, part = self.__move_helper(split_parts)
         max_target = -99999
         best = None
-        print("я тут 1")
-        print("split_parts:", split_parts)
-        print("num of clusters single", len(split_parts), "expected:", self.current_cells)
         for i in range(len(split_parts)):
-            print("я тут 2")
-            print("i:", i, "cell_index:", cell_index)
             if i != cell_index:
-                print("я тут 3")
                 split_parts[i].append(part)
                 new_split_machines = self.cfp.split_by_machines(split_parts)
                 new_target = self.cfp.target_function(split_parts, new_split_machines)
-                print("new target", new_target)
                 if new_target > max_target:
                     max_target = new_target
-                    print("best before", best)
                     best = deepcopy(split_parts), new_split_machines
-                    print("best after", best)
                 split_parts[i].pop()
-        print("single_move best:", best)
         return best
 
     def __exchange_move(self, solution):
         split_parts, _ = deepcopy(solution)
-        print("split_parts exchange:", split_parts)
         cell, cell_index, part = self.__move_helper(split_parts)
         max_target = -99999
         best = None
@@ -79,12 +68,13 @@ class SimulatedAnnealing:
                 split_parts[i].pop()
                 split_parts[i].append(exchange_part)
                 cell.remove(exchange_part)
-        print("num of clusters exchange", len(split_parts), "expected:", self.current_cells)
         return best
 
     def __iteration(self):
         while self.counter_mc < self.max_iterations and self.counter_trapped < self.max_iterations * self.trapped_percentage:
-            print("Iteration number:", self.counter_mc)
+            # if self.counter_mc % 50 == 0:
+            #     print(f"iter {self.counter_mc}/{self.max_iterations}")
+
             new_solution = self.__single_move(self.current_solution)
             if self.counter % self.D == 0:
                 new_solution = self.__exchange_move(new_solution)
@@ -112,10 +102,12 @@ class SimulatedAnnealing:
         self.T = self.T0
         self.__iteration()
         while self.T > self.Tf and self.counter_stagnant <= self.max_stagnant:
+            # if self.counter % 50 == 0:
+            #     print(f"iter {self.counter}/{self.max_iterations}")
+
             self.T *= self.alpha
             self.counter_mc = 0
             self.counter += 1
-            print("Temperature iteration: ")
             self.__iteration()
 
     def solve(self):

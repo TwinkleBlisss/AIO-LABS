@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 
 from algorithms.simulated_annealing_class import SimulatedAnnealing
+from algorithms.cell_formation_problem import CFP
 
 
 def tests_values(path: str = "benchmarks/") -> dict:
@@ -70,19 +71,51 @@ def show_results(delete_answers: bool = False):
     if delete_answers:
         return
 
-    # results = pd.DataFrame(columns=['Test_name', 'f', 'time'])
     tmp = {}
     for test_name, test_value in tests.items():
+        # print("\n\n\nTest name", test_name, "\n\n\n")
         start = time.time()
         algo_class = SimulatedAnnealing(test_value['matrix'])
-        sol, f = algo_class.solve()
+        solution, f = algo_class.solve()
         end = time.time()
-        tmp[test_name] = sol, f
-    print(tmp)
+        tmp[test_name] = [f, (end - start) * 10 ** 3]
+
+        # форматируем ответы
+        machines = solution[1]
+        machines_clusterId = [-1 for _ in range(test_value['m'])]
+        for i in range(len(machines)):
+            for j in machines[i]:
+                machines_clusterId[j] = i
+        parts = solution[0]
+        parts_clusterId = [-1 for _ in range(test_value['p'])]
+        for i in range(len(parts)):
+            for j in parts[i]:
+                parts_clusterId[j] = i
+
+        # сохраняем solution в файлик "testname.sol"
+        with open(f"{test_name}.sol", "w", encoding="utf-8") as f:
+            f.write(" ".join(map(str, machines_clusterId)) + "\n")  # машины
+            f.write(" ".join(map(str, parts_clusterId)))  # детали
+
+    results = pd.DataFrame(data=tmp).T
+    results.columns = ['f', 'time in ms']
+    print(results)
 
 
 def main():
-    show_results()
+    show_results(delete_answers=False)
+    # tests = tests_values()
+    #
+    # input_matrix = tests["37x53"]["matrix"]
+    #
+    # one = CFP(input_matrix)
+    # init_sol = one.initial_solution()
+    #
+    # print(one.parts_similarity_scores())
+    # print(init_sol[0])
+    # print(init_sol[1])
+    #
+    # print(one.target_function(*init_sol))
 
 
 if __name__ == "__main__":
